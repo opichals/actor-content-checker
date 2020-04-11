@@ -1,7 +1,7 @@
 {
     "dependencies": {
-	"apify": "^0.8.0",
-	"diff": "*"
+        "apify": "^0.8.0",
+        "htmldiff-js": "*"
     },
     "scripts": {
         "start": "node main.js"

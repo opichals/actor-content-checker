@@ -1,4 +1,5 @@
 const Apify = require('apify');
+const htmlDiff = require('htmldiff-js').default;
 
 // returns screenshot of a given element
 async function screenshotDOMElement(page, selector, padding = 0) {
@@ -68,7 +69,7 @@ Apify.main(async () => {
     console.log('Saving data...');
     let content = null;
     try {
-        content = await page.$eval(input.contentSelector, el => el.textContent);
+        content = await page.$eval(input.contentSelector, el => el.innerHTML);
     } catch(e) {
         throw new Error('Cannot get content (content selector is probably wrong)'); 
     }
@@ -101,10 +102,18 @@ Apify.main(async () => {
             await Apify.call('apify/send-mail', {
                 to: input.sendNotificationTo,
                 subject: 'Apify content checker - page changed!',
-                text: 'URL: ' + input.url + '\n' +
-                    'Previous data: ' + previousData + '\n' +
-                    'Current data: ' + content + '\n',
-                
+                html: `\
+                <html>\
+                  ${input.htmlHead || ''}
+                  <body>
+                    <h2>
+                        <a href="${input.url}">${input.url}</a>
+                    </h2>
+                    <div>
+                        ${htmlDiff.execute(previousData, content)}
+                    </div>
+                  </body>
+                </html>`,
                 attachments: [
                     {
                         filename: 'previousScreenshot.png',
