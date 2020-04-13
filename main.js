@@ -1,4 +1,5 @@
 const Apify = require('apify');
+const cheerio = require('cheerio');
 const htmlDiff = require('htmldiff-js').default;
 
 // returns screenshot of a given element
@@ -97,6 +98,11 @@ Apify.main(async () => {
         } else {
             console.log('Content changed');
             
+            const diffMarkup = htmlDiff.execute(previousData, content);
+            const $ = cheerio.load(diffMarkup);
+            $('*').has('.diffins').addClass('hasdiffins');
+            $('*').has('.diffdel').addClass('hasdiffdel');
+
             //send mail
             console.log('Sending mail...');
             await Apify.call('apify/send-mail', {
@@ -110,7 +116,7 @@ Apify.main(async () => {
                         <a href="${input.url}">${input.url}</a>
                     </h2>
                     <div>
-                        ${htmlDiff.execute(previousData, content)}
+                        ${$.html()}
                     </div>
                   </body>
                 </html>`,
@@ -124,7 +130,6 @@ Apify.main(async () => {
                         data: screenshotBuffer.toString('base64')
                     }
                 ]
-                
             });
         }
     }
