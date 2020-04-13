@@ -32,6 +32,13 @@
             "editor": "textfield",
             "prefill": "info@apify.com"
         },
+        "sendSubject": {
+            "title": "Email subject",
+            "type": "string",
+            "description": "Email subject for the notification",
+            "editor": "textfield",
+            "prefill": "page content changed!"
+        },
         "htmlHead": {
             "title": "pre-body html tags",
             "type": "string",

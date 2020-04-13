@@ -107,7 +107,7 @@ Apify.main(async () => {
             console.log('Sending mail...');
             await Apify.call('apify/send-mail', {
                 to: input.sendNotificationTo,
-                subject: 'Apify content checker - page changed!',
+                subject: `${input.sendSubject || 'page changed'}`,
                 html: `\
                 <html>\
                   ${input.htmlHead || ''}
